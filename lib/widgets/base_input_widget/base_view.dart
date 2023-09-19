@@ -46,7 +46,7 @@ class InputFrame extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                  width: 150,
+                  width: 160,
                   margin: const EdgeInsets.only(right: 20),
                   child: Text(
                     maxLines: 2,

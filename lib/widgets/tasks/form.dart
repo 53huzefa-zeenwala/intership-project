@@ -76,12 +76,15 @@ class _TaskFormState extends State<TaskForm> {
       'November',
       'December',
     ];
+
+    bool showCompleteDate = functionalStatus == Status.close &&
+        (!isTechnical || technicalStatus == Status.close);
     return Column(
       children: [
         InputContainer(
           child: Column(children: [
             InputFrame(
-              title: 'Starting Date',
+              title: 'Starting Date *',
               remark: 'Automatically Selected, Day of Task Created.',
               inputField: CustomDatePicker(
                 onSaved: (val) => task.createdAt =
@@ -104,7 +107,7 @@ class _TaskFormState extends State<TaskForm> {
             child: Column(
           children: [
             InputFrame(
-              title: 'Functional responsible',
+              title: 'Functional responsible *',
               inputField: CustomDropDown(
                 dropItems: widget.functionalMembers,
                 labelText: '',
@@ -133,7 +136,7 @@ class _TaskFormState extends State<TaskForm> {
                   onChanged: (value) => setState(() => isTechnical = value!),
                 )),
             InputFrame(
-              title: 'Technical responsible',
+              title: 'Technical responsible ${isTechnical ? '*' : ''}',
               inputField: CustomDropDown(
                 dropItems: widget.technicalMembers,
                 labelText: '',
@@ -165,7 +168,7 @@ class _TaskFormState extends State<TaskForm> {
             child: Column(
           children: [
             InputFrame(
-              title: 'Team',
+              title: 'Team *',
               inputField: CustomDropDown(
                 dropItems: Team.values.map((e) {
                   return getTeamString(e);
@@ -190,7 +193,7 @@ class _TaskFormState extends State<TaskForm> {
               ),
             ),
             InputFrame(
-                title: 'Work type',
+                title: 'Work type *',
                 inputField: CustomDropDown(
                   defaultValue: widget.workTypes.isNotEmpty &&
                           widget.workTypes.contains(task.workType)
@@ -221,13 +224,13 @@ class _TaskFormState extends State<TaskForm> {
                 )
               : const SizedBox(),
           InputFrame(
-            title: multipleTask ? 'Tasks' : 'Task',
+            title: multipleTask ? 'Tasks *' : 'Task *',
             remark: multipleTask
                 ? 'Add full stop after every task to separate them from each other.'
                 : '',
             inputField: NormalTextField(
               defaultValue: taskDescription.isNotEmpty ? taskDescription : null,
-              labelText: 'Description',
+              labelText: 'Description *',
               onSaved: (value) => setState(() => taskDescription = value!),
               keyboardType:
                   multipleTask ? TextInputType.multiline : TextInputType.text,
@@ -249,7 +252,7 @@ class _TaskFormState extends State<TaskForm> {
             child: Column(
           children: [
             InputFrame(
-              title: 'Planning month',
+              title: 'Planning month *',
               inputField: CustomDropDown(
                 dropItems: months,
                 defaultValue: months[task.planningMonth - 1],
@@ -269,7 +272,7 @@ class _TaskFormState extends State<TaskForm> {
               ),
             ),
             InputFrame(
-                title: 'Planning week',
+                title: 'Planning week *',
                 inputField: CustomDropDown(
                   dropItems: weeks,
                   defaultValue: weeks[task.planningWeek - 1],
@@ -292,7 +295,7 @@ class _TaskFormState extends State<TaskForm> {
             child: Column(
           children: [
             MultipleInputFrame(
-              title: 'Functional Status',
+              title: 'Functional Status *',
               smallerInputField: CustomDropDown(
                 dropItems: statusList,
                 labelText: '',
@@ -324,12 +327,13 @@ class _TaskFormState extends State<TaskForm> {
                         ? DateFormat(Constants.dateFormat)
                             .format(value ?? DateTime.now())
                         : null,
-                labelText: 'Complete Date',
+                labelText:
+                    'Complete Date ${functionalStatus == Status.close ? "*" : ""}',
                 isEnable: functionalStatus == Status.close,
               ),
             ),
             MultipleInputFrame(
-              title: 'Technical Status',
+              title: 'Technical Status ${isTechnical ? "*" : ""}',
               remark: 'Dates can only be selected after making status close.',
               smallerInputField: CustomDropDown(
                 dropItems: statusList,
@@ -365,7 +369,8 @@ class _TaskFormState extends State<TaskForm> {
                         ? DateFormat(Constants.dateFormat)
                             .format(value ?? DateTime.now())
                         : null,
-                labelText: 'Complete Date',
+                labelText:
+                    'Complete Date ${technicalStatus == Status.close ? "*" : ""}',
                 isEnable: technicalStatus == Status.close && isTechnical,
               ),
             )
@@ -405,32 +410,28 @@ class _TaskFormState extends State<TaskForm> {
                 )),
           ],
         )),
+        // InputContainer(child: InputFrame(title: 'Requirements Image', inputField: )),
         InputContainer(
           child: InputFrame(
-            title: 'Complete Date',
+            title: 'Complete Date ${showCompleteDate ? "*" : ""}',
             remark:
                 "Only be assign after ${isTechnical ? "technical and " : ""}functional work completed.",
             inputField: CustomDatePicker(
-              defaultValue: functionalStatus == Status.close &&
-                      (!isTechnical || technicalStatus == Status.close)
+              defaultValue: showCompleteDate
                   ? task.completeDate != null && task.completeDate!.isNotEmpty
                       ? DateFormat(Constants.dateFormat)
                           .parse(task.completeDate!)
                       : DateTime.now()
                   : null,
-              isEnable: functionalStatus == Status.close &&
-                  (!isTechnical || technicalStatus == Status.close),
+              isEnable: showCompleteDate,
               onSaved: (val) {
-                if (functionalStatus == Status.close &&
-                    (!isTechnical || technicalStatus == Status.close)) {
+                if (showCompleteDate) {
                   task.completeDate = DateFormat(Constants.dateFormat)
                       .format(val ?? DateTime.now());
                 }
               },
               validator: (val) {
-                if ((functionalStatus == Status.close &&
-                    (!isTechnical || technicalStatus == Status.close) &&
-                    val == null )) {
+                if ((showCompleteDate && val == null)) {
                   return 'Please assign complete date';
                 }
                 return null;

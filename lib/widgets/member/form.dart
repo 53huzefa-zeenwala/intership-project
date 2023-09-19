@@ -1,10 +1,12 @@
 import 'package:email_validator/email_validator.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:main_project/models/member_model.dart';
 import 'package:main_project/widgets/base_input_widget/base_view.dart';
 import 'package:main_project/widgets/custom_button/primary_button.dart';
 import 'package:main_project/widgets/custom_fields/custom_dropdown.dart';
+import 'package:main_project/widgets/custom_fields/single_file_input.dart';
 import 'package:main_project/widgets/custom_fields/textfield/normal_textfield.dart';
 import 'package:main_project/widgets/custom_fields/custom_date_picker.dart';
 import 'package:main_project/utils/constants.dart';
@@ -54,7 +56,7 @@ class _MemberFormState extends State<MemberForm> {
             child: Column(
           children: [
             InputFrame(
-              title: 'First Name',
+              title: 'First Name *',
               inputField: NormalTextField(
                 labelText: '',
                 autoFocus: true,
@@ -70,7 +72,7 @@ class _MemberFormState extends State<MemberForm> {
               ),
             ),
             InputFrame(
-              title: 'Last Name',
+              title: 'Last Name *',
               inputField: NormalTextField(
                 labelText: '',
                 defaultValue:
@@ -111,7 +113,7 @@ class _MemberFormState extends State<MemberForm> {
                 ),
               ),
               InputFrame(
-                title: 'Email',
+                title: 'Email *',
                 inputField: NormalTextField(
                   labelText: '',
                   onSaved: (value) => member.email = value!,
@@ -132,8 +134,9 @@ class _MemberFormState extends State<MemberForm> {
               InputFrame(
                 title: 'Joining Date',
                 inputField: CustomDatePicker(
-                  onSaved: (val) => member.joinDate = val == null ? null : 
-                      DateFormat(Constants.dateFormat).format(val),
+                  onSaved: (val) => member.joinDate = val == null
+                      ? null
+                      : DateFormat(Constants.dateFormat).format(val),
                   defaultValue: member.joinDate == null
                       ? null
                       : DateFormat(Constants.dateFormat).parse(
@@ -151,15 +154,15 @@ class _MemberFormState extends State<MemberForm> {
           child: Column(
             children: [
               InputFrame(
-                title: 'Department',
+                title: 'Department *',
                 inputField: CustomDropDown(
                   dropItems: departments,
                   defaultValue: getDepartmentString(member.department),
                   labelText: '',
-                  onSaved: (value) => member.department = getDepartment(value![0])!,
+                  onSaved: (value) =>
+                      member.department = getDepartment(value![0])!,
                   validator: (value) {
-                    if (value == null ||
-                        value.isEmpty) {
+                    if (value == null || value.isEmpty) {
                       return 'Please Assign Department';
                     }
                     return null;
@@ -167,19 +170,40 @@ class _MemberFormState extends State<MemberForm> {
                 ),
               ),
               InputFrame(
-                title: 'Team',
+                title: 'Team *',
                 inputField: CustomDropDown(
                   defaultValue: getTeamString(member.team),
                   dropItems: teams,
                   labelText: '',
                   onSaved: (value) => member.team = getTeam(value![0])!,
                   validator: (value) {
-                    if (value == null ||
-                        value.isEmpty) {
+                    if (value == null || value.isEmpty) {
                       return 'Please Assign team';
                     }
                     return null;
                   },
+                ),
+              ),
+            ],
+          ),
+        ),
+        InputContainer(
+          child: Column(
+            children: [
+              InputFrame(
+                title: 'Profile Image',
+                inputField: Container(
+                  padding: const EdgeInsets.all(8),
+                  constraints: const BoxConstraints(maxWidth: 400),
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(4)),
+                    color: Colors.white,
+                  ),
+                  child: SingleFileInput(
+                    dialogTitle: 'Profile Image',
+                    inputFileType: FileType.image,
+                    upload: (val) {},
+                  ),
                 ),
               ),
             ],
