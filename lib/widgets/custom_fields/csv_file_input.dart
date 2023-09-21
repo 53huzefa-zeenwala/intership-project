@@ -33,7 +33,7 @@ class _CsvFileInputState extends State<CsvFileInput> {
 
       csvFileContentList = utf8.decode(outputAsUint8List).split('\n');
 
-      // print(csvFileContentList[0].toString().split(',')); // [id, firstname, lastname, email, department, team ]
+      // print(csvFileContentList[0].toString().split(',')); // * [id, firstname, lastname, email, department, team ]
 
       if (csvFileContentList.length <= 2) {
         throw Exception('No data found in file, try change file and reupload.');
@@ -43,7 +43,6 @@ class _CsvFileInputState extends State<CsvFileInput> {
         mainData.add(data.toString().trim().split(','));
       }
 
-      print(mainData);
       setState(() => isLoading = false);
 
       widget.upload(mainData);
@@ -89,9 +88,9 @@ class _CsvFileInputState extends State<CsvFileInput> {
             child: CircularProgressIndicator(),
           )
         : PrimaryButton(
-            paddingHorizontal: 14,
             title: 'Upload CSV',
             onTap: readAndParseCSV,
+            paddingHorizontal: 14,
             fontSize: 14,
             paddingVertical: 20,
           );

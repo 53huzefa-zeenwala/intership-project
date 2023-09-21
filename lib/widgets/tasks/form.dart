@@ -1,9 +1,11 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:main_project/widgets/base_input_widget/base_view.dart';
 import 'package:main_project/widgets/custom_button/primary_button.dart';
 import 'package:main_project/widgets/custom_fields/custom_date_picker.dart';
 import 'package:main_project/widgets/custom_fields/custom_dropdown.dart';
+import 'package:main_project/widgets/custom_fields/mutiple_file_input.dart';
 import 'package:main_project/widgets/custom_fields/textfield/normal_textfield.dart';
 import 'package:main_project/models/task_model.dart';
 import 'package:main_project/utils/constants.dart';
@@ -103,175 +105,193 @@ class _TaskFormState extends State<TaskForm> {
             )
           ]),
         ),
+        const InputContainer(
+          child: InputFrame(
+            title: 'Requirements Image',
+            inputField: MultipleFileInput(
+              fileType: FileType.image,
+              dialogTitle: 'Images',
+            ),
+          ),
+        ),
         InputContainer(
-            child: Column(
-          children: [
-            InputFrame(
-              title: 'Functional responsible *',
-              inputField: CustomDropDown(
-                dropItems: widget.functionalMembers,
-                labelText: '',
-                isEnable: true,
-                defaultValue: task.functionalResponsible.isNotEmpty &&
-                        widget.functionalMembers
-                            .contains(task.functionalResponsible)
-                    ? task.technicalResponsible
-                    : widget.functionalMembers[0],
-                onSaved: (newValue) => task.functionalResponsible = newValue!,
-                validator: (val) {
-                  if (val == null || val.isEmpty) {
-                    return 'Please assign functional responsible';
-                  }
-                  if (!widget.functionalMembers.contains(val)) {
-                    return 'Function Responsible not found';
-                  }
-                  return null;
-                },
-              ),
-            ),
-            InputFrame(
-                title: 'Is technical',
-                inputField: Checkbox(
-                  value: isTechnical,
-                  onChanged: (value) => setState(() => isTechnical = value!),
-                )),
-            InputFrame(
-              title: 'Technical responsible ${isTechnical ? '*' : ''}',
-              inputField: CustomDropDown(
-                dropItems: widget.technicalMembers,
-                labelText: '',
-                defaultValue: isTechnical
-                    ? task.technicalResponsible != null &&
-                            (task.technicalResponsible!.isNotEmpty &&
-                                widget.technicalMembers
-                                    .contains(task.technicalResponsible))
-                        ? task.technicalResponsible
-                        : widget.functionalMembers[0]
-                    : null,
-                isEnable: isTechnical,
-                onSaved: (newValue) =>
-                    task.technicalResponsible = isTechnical ? newValue! : null,
-                validator: (val) {
-                  if (isTechnical && (val == null || val.isEmpty)) {
-                    return 'Please assign Technical responsible';
-                  }
-                  if (isTechnical && (!widget.technicalMembers.contains(val))) {
-                    return 'Function Responsible not found';
-                  }
-                  return null;
-                },
-              ),
-            ),
-          ],
-        )),
-        InputContainer(
-            child: Column(
-          children: [
-            InputFrame(
-              title: 'Team *',
-              inputField: CustomDropDown(
-                dropItems: Team.values.map((e) {
-                  return getTeamString(e);
-                }).toList(),
-                labelText: '',
-                defaultValue: getTeamString(task.team),
-                onSaved: (value) => task.team = getTeam(value![0])!,
-                validator: (val) {
-                  if (val == null) {
-                    return 'Please assign team';
-                  }
-                  return null;
-                },
-              ),
-            ),
-            InputFrame(
-              title: 'Requirements given',
-              inputField: Checkbox(
-                value: isRequirementGiven,
-                onChanged: (value) =>
-                    setState(() => isRequirementGiven = value!),
-              ),
-            ),
-            InputFrame(
-                title: 'Work type *',
+          child: Column(
+            children: [
+              InputFrame(
+                title: 'Functional responsible *',
                 inputField: CustomDropDown(
-                  defaultValue: widget.workTypes.isNotEmpty &&
-                          widget.workTypes.contains(task.workType)
-                      ? task.workType
-                      : widget.workTypes[0],
-                  dropItems: widget.workTypes,
-                  isEnable: true,
-                  onSaved: (value) => task.workType = value!,
+                  dropItems: widget.functionalMembers,
                   labelText: '',
+                  isEnable: true,
+                  defaultValue: task.functionalResponsible.isNotEmpty &&
+                          widget.functionalMembers
+                              .contains(task.functionalResponsible)
+                      ? task.technicalResponsible
+                      : widget.functionalMembers[0],
+                  onSaved: (newValue) => task.functionalResponsible = newValue!,
                   validator: (val) {
-                    if (val == null || !widget.workTypes.contains(val)) {
-                      return 'Please assign work type';
+                    if (val == null || val.isEmpty) {
+                      return 'Please assign functional responsible';
+                    }
+                    if (!widget.functionalMembers.contains(val)) {
+                      return 'Function Responsible not found';
                     }
                     return null;
                   },
-                )),
-          ],
-        )),
-        InputContainer(
-            child: Column(children: [
-          widget.formType == 'New'
-              ? InputFrame(
-                  title: 'Multiple task',
-                  inputField: Checkbox(
-                    value: multipleTask,
-                    onChanged: (value) => setState(() => multipleTask = value!),
-                  ),
-                )
-              : const SizedBox(),
-          InputFrame(
-            title: multipleTask ? 'Tasks *' : 'Task *',
-            remark: multipleTask
-                ? 'Add full stop after every task to separate them from each other.'
-                : '',
-            inputField: NormalTextField(
-              defaultValue: taskDescription.isNotEmpty ? taskDescription : null,
-              labelText: 'Description *',
-              onSaved: (value) => setState(() => taskDescription = value!),
-              keyboardType:
-                  multipleTask ? TextInputType.multiline : TextInputType.text,
-              maxLines: multipleTask ? 5 : 1,
-              verticalPadding: multipleTask ? 12 : 6,
-              validate: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Task Description is required';
-                }
-                if (value.length < 5) {
-                  return 'Task Description is very short';
-                }
-                return null;
-              },
-            ),
-          )
-        ])),
-        InputContainer(
-            child: Column(
-          children: [
-            InputFrame(
-              title: 'Planning month *',
-              inputField: CustomDropDown(
-                dropItems: months,
-                defaultValue: months[task.planningMonth - 1],
-                labelText: 'Choose planning month',
-                onSaved: (value) {
-                  task.planningMonth = months.indexOf(value!) + 1;
-                },
-                validator: (val) {
-                  if (val == null || val.isEmpty) {
-                    return 'Please provide planning month';
-                  }
-                  if (!months.contains(val)) {
-                    return 'Planning month is not assign properly';
-                  }
-                  return null;
-                },
+                ),
               ),
-            ),
-            InputFrame(
+              InputFrame(
+                  title: 'Is technical',
+                  inputField: Checkbox(
+                    value: isTechnical,
+                    onChanged: (value) => setState(() => isTechnical = value!),
+                  )),
+              InputFrame(
+                title: 'Technical responsible ${isTechnical ? '*' : ''}',
+                inputField: CustomDropDown(
+                  dropItems: widget.technicalMembers,
+                  labelText: '',
+                  defaultValue: isTechnical
+                      ? task.technicalResponsible != null &&
+                              (task.technicalResponsible!.isNotEmpty &&
+                                  widget.technicalMembers
+                                      .contains(task.technicalResponsible))
+                          ? task.technicalResponsible
+                          : widget.functionalMembers[0]
+                      : null,
+                  isEnable: isTechnical,
+                  onSaved: (newValue) => task.technicalResponsible =
+                      isTechnical ? newValue! : null,
+                  validator: (val) {
+                    if (isTechnical && (val == null || val.isEmpty)) {
+                      return 'Please assign Technical responsible';
+                    }
+                    if (isTechnical &&
+                        (!widget.technicalMembers.contains(val))) {
+                      return 'Function Responsible not found';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        InputContainer(
+          child: Column(
+            children: [
+              InputFrame(
+                title: 'Team *',
+                inputField: CustomDropDown(
+                  dropItems: Team.values.map((e) {
+                    return getTeamString(e);
+                  }).toList(),
+                  labelText: '',
+                  defaultValue: getTeamString(task.team),
+                  onSaved: (value) => task.team = getTeam(value![0])!,
+                  validator: (val) {
+                    if (val == null) {
+                      return 'Please assign team';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              InputFrame(
+                title: 'Requirements given',
+                inputField: Checkbox(
+                  value: isRequirementGiven,
+                  onChanged: (value) =>
+                      setState(() => isRequirementGiven = value!),
+                ),
+              ),
+              InputFrame(
+                  title: 'Work type *',
+                  inputField: CustomDropDown(
+                    defaultValue: widget.workTypes.isNotEmpty &&
+                            widget.workTypes.contains(task.workType)
+                        ? task.workType
+                        : widget.workTypes[0],
+                    dropItems: widget.workTypes,
+                    isEnable: true,
+                    onSaved: (value) => task.workType = value!,
+                    labelText: '',
+                    validator: (val) {
+                      if (val == null || !widget.workTypes.contains(val)) {
+                        return 'Please assign work type';
+                      }
+                      return null;
+                    },
+                  )),
+            ],
+          ),
+        ),
+        InputContainer(
+          child: Column(
+            children: [
+              widget.formType == 'New'
+                  ? InputFrame(
+                      title: 'Multiple task',
+                      inputField: Checkbox(
+                        value: multipleTask,
+                        onChanged: (value) =>
+                            setState(() => multipleTask = value!),
+                      ),
+                    )
+                  : const SizedBox(),
+              InputFrame(
+                title: multipleTask ? 'Tasks *' : 'Task *',
+                remark: multipleTask
+                    ? 'Add full stop after every task to separate them from each other.'
+                    : '',
+                inputField: NormalTextField(
+                  defaultValue:
+                      taskDescription.isNotEmpty ? taskDescription : null,
+                  labelText: 'Description *',
+                  onSaved: (value) => setState(() => taskDescription = value!),
+                  keyboardType: multipleTask
+                      ? TextInputType.multiline
+                      : TextInputType.text,
+                  maxLines: multipleTask ? 5 : 1,
+                  verticalPadding: multipleTask ? 12 : 6,
+                  validate: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Task Description is required';
+                    }
+                    if (value.length < 5) {
+                      return 'Task Description is very short';
+                    }
+                    return null;
+                  },
+                ),
+              )
+            ],
+          ),
+        ),
+        InputContainer(
+          child: Column(
+            children: [
+              InputFrame(
+                title: 'Planning month *',
+                inputField: CustomDropDown(
+                  dropItems: months,
+                  defaultValue: months[task.planningMonth - 1],
+                  labelText: 'Choose planning month',
+                  onSaved: (value) {
+                    task.planningMonth = months.indexOf(value!) + 1;
+                  },
+                  validator: (val) {
+                    if (val == null || val.isEmpty) {
+                      return 'Please provide planning month';
+                    }
+                    if (!months.contains(val)) {
+                      return 'Planning month is not assign properly';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              InputFrame(
                 title: 'Planning week *',
                 inputField: CustomDropDown(
                   dropItems: weeks,
@@ -288,98 +308,101 @@ class _TaskFormState extends State<TaskForm> {
                     }
                     return null;
                   },
-                )),
-          ],
-        )),
+                ),
+              ),
+            ],
+          ),
+        ),
         InputContainer(
-            child: Column(
-          children: [
-            MultipleInputFrame(
-              title: 'Functional Status *',
-              smallerInputField: CustomDropDown(
-                dropItems: statusList,
-                labelText: '',
-                onChange: (value) {
-                  setState(() {
-                    functionalStatus = getStatus(value![0])!;
-                  });
-                },
-                onSaved: (value) {
-                  task.functionalStatus = getStatus(value![0])!;
-                },
-                defaultValue: getStatusString(functionalStatus),
-                validator: (val) {
-                  if (val == null || val.isEmpty) {
-                    return 'Functional status is required';
-                  }
-                  return null;
-                },
+          child: Column(
+            children: [
+              MultipleInputFrame(
+                title: 'Functional Status *',
+                smallerInputField: CustomDropDown(
+                  dropItems: statusList,
+                  labelText: '',
+                  onChange: (value) {
+                    setState(() {
+                      functionalStatus = getStatus(value![0])!;
+                    });
+                  },
+                  onSaved: (value) {
+                    task.functionalStatus = getStatus(value![0])!;
+                  },
+                  defaultValue: getStatusString(functionalStatus),
+                  validator: (val) {
+                    if (val == null || val.isEmpty) {
+                      return 'Functional status is required';
+                    }
+                    return null;
+                  },
+                ),
+                largerInputField: CustomDatePicker(
+                  defaultValue: functionalStatus == Status.close
+                      ? task.functionalWorkCompleteDate != null
+                          ? DateFormat(Constants.dateFormat)
+                              .parse(task.functionalWorkCompleteDate!)
+                          : DateTime.now()
+                      : null,
+                  onSaved: (value) => task.functionalWorkCompleteDate =
+                      functionalStatus == Status.close
+                          ? DateFormat(Constants.dateFormat)
+                              .format(value ?? DateTime.now())
+                          : null,
+                  labelText:
+                      'Complete Date ${functionalStatus == Status.close ? "*" : ""}',
+                  isEnable: functionalStatus == Status.close,
+                ),
               ),
-              largerInputField: CustomDatePicker(
-                defaultValue: functionalStatus == Status.close
-                    ? task.functionalWorkCompleteDate != null
-                        ? DateFormat(Constants.dateFormat)
-                            .parse(task.functionalWorkCompleteDate!)
-                        : DateTime.now()
-                    : null,
-                onSaved: (value) => task.functionalWorkCompleteDate =
-                    functionalStatus == Status.close
-                        ? DateFormat(Constants.dateFormat)
-                            .format(value ?? DateTime.now())
-                        : null,
-                labelText:
-                    'Complete Date ${functionalStatus == Status.close ? "*" : ""}',
-                isEnable: functionalStatus == Status.close,
-              ),
-            ),
-            MultipleInputFrame(
-              title: 'Technical Status ${isTechnical ? "*" : ""}',
-              remark: 'Dates can only be selected after making status close.',
-              smallerInputField: CustomDropDown(
-                dropItems: statusList,
-                isEnable: isTechnical,
-                labelText: '',
-                onChange: (value) {
-                  setState(() {
-                    technicalStatus = getStatus(value![0])!;
-                  });
-                },
-                onSaved: (value) {
-                  task.technicalStatus = getStatus(value![0])!;
-                },
-                defaultValue: isTechnical && technicalStatus != null
-                    ? getStatusString(technicalStatus!)
-                    : null,
-                validator: (val) {
-                  if (isTechnical && (val == null || val.isEmpty)) {
-                    return 'Technical status is required';
-                  }
-                  return null;
-                },
-              ),
-              largerInputField: CustomDatePicker(
-                defaultValue: isTechnical && technicalStatus == Status.close
-                    ? task.technicalWorkCompleteDate != null
-                        ? DateFormat(Constants.dateFormat)
-                            .parse(task.technicalWorkCompleteDate!)
-                        : DateTime.now()
-                    : null,
-                onSaved: (value) => task.technicalWorkCompleteDate =
-                    isTechnical && technicalStatus == Status.close
-                        ? DateFormat(Constants.dateFormat)
-                            .format(value ?? DateTime.now())
-                        : null,
-                labelText:
-                    'Complete Date ${technicalStatus == Status.close ? "*" : ""}',
-                isEnable: technicalStatus == Status.close && isTechnical,
-              ),
-            )
-          ],
-        )),
+              MultipleInputFrame(
+                title: 'Technical Status ${isTechnical ? "*" : ""}',
+                remark: 'Dates can only be selected after making status close.',
+                smallerInputField: CustomDropDown(
+                  dropItems: statusList,
+                  isEnable: isTechnical,
+                  labelText: '',
+                  onChange: (value) {
+                    setState(() {
+                      technicalStatus = getStatus(value![0])!;
+                    });
+                  },
+                  onSaved: (value) {
+                    task.technicalStatus = getStatus(value![0])!;
+                  },
+                  defaultValue: isTechnical && technicalStatus != null
+                      ? getStatusString(technicalStatus!)
+                      : null,
+                  validator: (val) {
+                    if (isTechnical && (val == null || val.isEmpty)) {
+                      return 'Technical status is required';
+                    }
+                    return null;
+                  },
+                ),
+                largerInputField: CustomDatePicker(
+                  defaultValue: isTechnical && technicalStatus == Status.close
+                      ? task.technicalWorkCompleteDate != null
+                          ? DateFormat(Constants.dateFormat)
+                              .parse(task.technicalWorkCompleteDate!)
+                          : DateTime.now()
+                      : null,
+                  onSaved: (value) => task.technicalWorkCompleteDate =
+                      isTechnical && technicalStatus == Status.close
+                          ? DateFormat(Constants.dateFormat)
+                              .format(value ?? DateTime.now())
+                          : null,
+                  labelText:
+                      'Complete Date ${technicalStatus == Status.close ? "*" : ""}',
+                  isEnable: technicalStatus == Status.close && isTechnical,
+                ),
+              )
+            ],
+          ),
+        ),
         InputContainer(
-            child: Column(
-          children: [
-            InputFrame(
+          child: Column(
+            children: [
+              InputFrame(
                 title: 'Functional remark',
                 inputField: NormalTextField(
                   defaultValue: task.functionalRemark != null &&
@@ -391,8 +414,9 @@ class _TaskFormState extends State<TaskForm> {
                   maxLines: 5,
                   verticalPadding: 12,
                   keyboardType: TextInputType.multiline,
-                )),
-            InputFrame(
+                ),
+              ),
+              InputFrame(
                 title: 'Technical remark',
                 inputField: NormalTextField(
                   defaultValue: isTechnical &&
@@ -407,10 +431,11 @@ class _TaskFormState extends State<TaskForm> {
                   isEnable: isTechnical,
                   maxLines: 5,
                   keyboardType: TextInputType.multiline,
-                )),
-          ],
-        )),
-        // InputContainer(child: InputFrame(title: 'Requirements Image', inputField: )),
+                ),
+              ),
+            ],
+          ),
+        ),
         InputContainer(
           child: InputFrame(
             title: 'Complete Date ${showCompleteDate ? "*" : ""}',

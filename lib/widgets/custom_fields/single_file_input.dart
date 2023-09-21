@@ -6,12 +6,14 @@ class SingleFileInput extends StatefulWidget {
   final FileType inputFileType;
   final String dialogTitle;
   final Function(FilePickerResult) upload;
+  final List<String>? allowedExtension;
 
   const SingleFileInput({
     super.key,
     required this.inputFileType,
     required this.dialogTitle,
     required this.upload,
+    this.allowedExtension,
   });
 
   @override
@@ -19,22 +21,23 @@ class SingleFileInput extends StatefulWidget {
 }
 
 class _SingleFileInputState extends State<SingleFileInput> {
-  FilePickerResult? pickedImage;
-  PlatformFile? profileImageFile;
+  FilePickerResult? pickedFile;
+  PlatformFile? file;
   bool isLoading = false;
 
   void pickImage() async {
     setState(() => isLoading = true);
     try {
-      pickedImage = await FilePicker.platform.pickFiles(
+      pickedFile = await FilePicker.platform.pickFiles(
         allowMultiple: true,
         dialogTitle: widget.dialogTitle,
         type: widget.inputFileType,
+        allowedExtensions: widget.allowedExtension,
       );
-      if (pickedImage != null) {
-        widget.upload(pickedImage!);
+      if (pickedFile != null) {
+        widget.upload(pickedFile!);
         setState(() {
-          profileImageFile = pickedImage?.files.single;
+          file = pickedFile?.files.single;
         });
       }
     } catch (e) {
@@ -81,7 +84,7 @@ class _SingleFileInputState extends State<SingleFileInput> {
           width: 10,
         ),
         Text(
-          profileImageFile?.name ?? 'no file selected',
+          file?.name ?? 'no file selected',
           style: Theme.of(context).textTheme.labelMedium?.merge(
                 TextStyle(
                   color: Colors.grey.shade600,
@@ -92,9 +95,9 @@ class _SingleFileInputState extends State<SingleFileInput> {
         SizedBox(
           width: 40,
           height: 35,
-          child: pickedImage != null
+          child: pickedFile != null && widget.inputFileType == FileType.image
               ? Image.memory(
-                  pickedImage!.files.single.bytes!,
+                  pickedFile!.files.single.bytes!,
                 )
               : isLoading
                   ? const CircularProgressIndicator()
