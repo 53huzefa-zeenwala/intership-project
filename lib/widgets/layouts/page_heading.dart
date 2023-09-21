@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 class PageHeading extends StatelessWidget {
   final String title;
+  final Widget button;
 
-  const PageHeading({super.key, required this.title});
+  const PageHeading(
+      {super.key, required this.title, this.button = const SizedBox()});
 
   @override
   Widget build(BuildContext context) {
@@ -13,9 +15,15 @@ class PageHeading extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration:
           const BoxDecoration(border: BorderDirectional(bottom: BorderSide())),
-      child: Text(
-        title,
-        style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w800),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w800),
+          ),
+          button
+        ],
       ),
     );
   }

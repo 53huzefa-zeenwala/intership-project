@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:main_project/constants/dummy_tasks.dart';
 import 'package:main_project/models/member_model.dart';
 import 'package:main_project/utils/teams.dart';
+import 'package:main_project/widgets/custom_fields/csv_file_input.dart';
 import 'package:main_project/widgets/layouts/base_dialog.dart';
 import 'package:main_project/widgets/layouts/base_layout.dart';
 import 'package:main_project/widgets/layouts/filter_dialog.dart';
@@ -28,25 +29,47 @@ class _MembersPageState extends State<MembersPage> {
   String sortBy = 'Inc';
   String filterDepartment = 'All';
   String filterTeam = 'All';
+  late List<Member> dummyMembers;
+  void generateData(List<List> data) {
+    try {
+      var memberCopy = [...dummyMembers];
+
+      List header = data[0];
+      var remainData = data.skip(1);
+      for (var data in remainData) {
+        memberCopy.add(Member.fromStringData(data, header));
+      }
+      setState(() {
+        members = memberCopy;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     sortTo = sortFrom[0];
+    dummyMembers = members;
   }
 
   @override
   Widget build(BuildContext context) {
     final departments = Department.values.map((e) => describeEnum(e)).toList();
     departments.add('All');
+
     return BaseLayout(
       child: SingleChildScrollView(
         physics: const ScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
-            const PageHeading(title: 'Members'),
+            PageHeading(
+              title: 'Members',
+              button: CsvFileInput(upload: generateData),
+            ),
             Padding(
               padding: const EdgeInsets.only(
                 top: 10.0,
@@ -193,8 +216,7 @@ class _MembersPageState extends State<MembersPage> {
             Container(
               clipBehavior: Clip.hardEdge,
               decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10))
-              ),
+                  borderRadius: BorderRadius.all(Radius.circular(10))),
               child: Column(
                 children: [
                   Container(
@@ -299,7 +321,8 @@ class _MembersPageState extends State<MembersPage> {
                                       : const SizedBox(),
                                   Text(
                                     member.email,
-                                    style: Theme.of(context).textTheme.bodySmall,
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   )
@@ -369,7 +392,7 @@ class _MembersPageState extends State<MembersPage> {
     );
   }
 
-   Flexible dataContainer(BuildContext context,
+  Flexible dataContainer(BuildContext context,
       {required Widget data,
       double? width,
       Alignment dataAlign = Alignment.centerLeft,
@@ -404,10 +427,11 @@ class MemberDetailDialog extends StatelessWidget {
         child: Column(
           children: [
             detail(context, title: 'Team', data: getTeamString(data.team)),
-            detail(context, title: 'Department', data: getDepartmentString(data.department)),
+            detail(context,
+                title: 'Department',
+                data: getDepartmentString(data.department)),
             detail(context,
                 title: 'Join Date', data: data.joinDate ?? 'Not Provided'),
-
             detail(context, title: 'Email', data: data.email),
             detail(context,
                 title: 'Phone Number',

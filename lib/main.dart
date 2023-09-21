@@ -73,9 +73,10 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.white,
-            onSecondary: Colors.grey.shade200,
-            onTertiary: Colors.white),
+          seedColor: Colors.white,
+          onSecondary: Colors.grey.shade200,
+          onTertiary: Colors.white,
+        ),
         primaryColor: const Color.fromRGBO(65, 42, 114, 1),
         primaryColorLight: const Color.fromRGBO(234, 215, 255, 1),
         highlightColor: const Color.fromRGBO(219, 185, 255, 1),
@@ -124,26 +125,31 @@ class MyApp extends StatelessWidget {
           fillColor: Colors.white,
           focusColor: Colors.grey.shade300,
           focusedBorder: const OutlineInputBorder(
-            borderSide:
-                BorderSide(color: Color.fromRGBO(65, 42, 114, 1), width: 2),
+            borderSide: BorderSide(
+              color: Color.fromRGBO(65, 42, 114, 1),
+              width: 2,
+            ),
           ),
           border: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey.shade400),
+            borderSide: BorderSide(
+              color: Colors.grey.shade400,
+            ),
           ),
           labelStyle: const TextStyle(
             color: Color.fromRGBO(65, 42, 114, 1),
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 6,
+            horizontal: 10,
+          ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             textStyle: Theme.of(context).textTheme.displayMedium,
           ),
         ),
-        
       ),
       debugShowCheckedModeBanner: false,
       routerConfig: _router,

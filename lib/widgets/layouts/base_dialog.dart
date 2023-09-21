@@ -7,11 +7,14 @@ class BaseDialog extends StatelessWidget {
   final Function() mainFunction;
   final String title;
   final Widget displayData;
+  final String mainFunctionButtonTile;
   const BaseDialog(
       {super.key,
       required this.maxWidth,
       required this.mainFunction,
-      required this.title, required this.displayData});
+      required this.title,
+      required this.displayData,
+      this.mainFunctionButtonTile = 'Edit'});
 
   @override
   Widget build(BuildContext context) {
@@ -62,10 +65,21 @@ class BaseDialog extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  
-                  SecondaryButton(title: 'Close', onTap: () => Navigator.pop(context), fontSize: 16, paddingHorizontal: 22, paddingVertical: 16, ),
+                  SecondaryButton(
+                    title: 'Close',
+                    onTap: () => Navigator.pop(context),
+                    fontSize: 16,
+                    paddingHorizontal: 22,
+                    paddingVertical: 16,
+                  ),
                   const SizedBox(width: 20),
-                  PrimaryButton(title: 'Edit', onTap: mainFunction, fontSize: 16, paddingHorizontal: 26, paddingVertical: 18, ),
+                  PrimaryButton(
+                    title: mainFunctionButtonTile,
+                    onTap: mainFunction,
+                    fontSize: 16,
+                    paddingHorizontal: 26,
+                    paddingVertical: 18,
+                  ),
                   // FilledButton(
                   //   onPressed: mainFunction,
                   //   style: FilledButton.styleFrom(

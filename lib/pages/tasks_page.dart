@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:main_project/models/member_model.dart';
+import 'package:main_project/widgets/custom_fields/csv_file_input.dart';
 // import 'package:main_project/widgets/home/single_task.dart';
 import 'package:main_project/widgets/layouts/base_layout.dart';
 import 'package:main_project/widgets/layouts/filter_dialog.dart';
@@ -24,6 +25,31 @@ class _TasksPageState extends State<TasksPage> {
   String funcStatus = 'All';
   String techStatus = 'All';
   String workType = 'Every';
+  late List<Task> allTasks;
+
+  void generateTasks(List<List> data) {
+    try {
+      List<Task> newTasks = [];
+
+      List header = data[0];
+      var remainData = data.skip(1);
+      for (var data in remainData) {
+        newTasks.add(Task.fromCSV(data, header));
+      }
+      setState(() {
+        allTasks.addAll(newTasks);
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    allTasks = tasks;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +62,12 @@ class _TasksPageState extends State<TasksPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Page Heading
-            const PageHeading(title: 'All Tasks'),
+            PageHeading(
+              title: 'All Tasks',
+              button: CsvFileInput(
+                upload: generateTasks,
+              ),
+            ),
 
             // Filter to control tasks
             Padding(
@@ -260,7 +291,7 @@ class _TasksPageState extends State<TasksPage> {
                   Text('Tasks',
                       style: Theme.of(context).textTheme.displayMedium),
                   Text('-', style: Theme.of(context).textTheme.displayMedium),
-                  Text(tasks.length.toString(),
+                  Text(allTasks.length.toString(),
                       style: Theme.of(context).textTheme.bodyMedium),
                 ],
               ),
@@ -279,9 +310,9 @@ class _TasksPageState extends State<TasksPage> {
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
-                itemCount: tasks.length,
+                itemCount: allTasks.length,
                 itemBuilder: (context, index) {
-                  final task = tasks[index];
+                  final task = allTasks[index];
                   return DetailTask(task: task);
                 },
               ),
@@ -330,10 +361,12 @@ class DetailTask extends StatelessWidget {
               data: task.functionalResponsible,
               width: 105),
           task.isTechnical
-              ? detail(context,
+              ? detail(
+                  context,
                   title: 'Tech Response',
                   data: task.technicalResponsible!,
-                  width: 105)
+                  width: 105,
+                )
               : detail(context, title: 'Is technical', data: 'False'),
           detail(
             context,

@@ -9,7 +9,7 @@ String getStatusValue(Status data) {
 
 Status? getStatus(String val) {
   for (final e in Status.values) {
-    if (describeEnum(e)[0].toUpperCase() == val) {
+    if (describeEnum(e)[0].toUpperCase() == val.toUpperCase()) {
       return e;
     }
   }

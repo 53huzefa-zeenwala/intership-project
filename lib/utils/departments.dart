@@ -8,7 +8,7 @@ String getDepartmentValue(Department data) {
 
 Department? getDepartment(String val) {
   for (final e in Department.values) {
-    if (describeEnum(e)[0].toUpperCase() == val) {
+    if (describeEnum(e)[0].toUpperCase() == val.toUpperCase()) {
       return e;
     }
   }

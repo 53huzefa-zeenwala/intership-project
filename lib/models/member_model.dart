@@ -43,6 +43,41 @@ class Member {
       completedTasks: data['completedTasks'],
     );
   }
+  factory Member.fromStringData(List data, List header) {
+    var department = getDepartment(data[header.indexOf('department')][0]);
+    var team = getTeam(data[header.indexOf('team')][0]);
+    if (team == null || department == null) {
+      throw Exception('Data Format is not correct, try changing file.');
+    }
+    int getTaskCount(title) {
+      if (!header.contains(title) || data[header.indexOf(title)] == null) {
+        return 0;
+      } else {
+        var taskCount = int.tryParse(data[header.indexOf(title)]);
+        if (taskCount == null) {
+          throw Exception('Value is not assign correctly for $title');
+        }
+        return taskCount;
+      }
+    }
+
+    return Member(
+      id: data[header.indexOf('id')],
+      firstName: data[header.indexOf('firstName')],
+      lastName: data[header.indexOf('lastName')],
+      department: department,
+      email: data[header.indexOf('email')],
+      team: team,
+      assignTasks: getTaskCount('assignTasks'),
+      pendingTasks: getTaskCount('pendingTasks'),
+      completedTasks: getTaskCount('completedTasks'),
+      joinDate:
+          header.contains('joinDate') ? data[header.indexOf('joinDate')] : null,
+      phoneNumber: header.contains('phoneNumber')
+          ? data[header.indexOf('phoneNumber')]
+          : null,
+    );
+  }
   @override
   String toString() {
     return 'Member firstName: $firstName lastName: $lastName phoneNumber: $phoneNumber department: $department team: $team joinDate: $joinDate email: $email id: $id assignTasks: $assignTasks pendingTasks: $pendingTasks completedTasks: $completedTasks';
