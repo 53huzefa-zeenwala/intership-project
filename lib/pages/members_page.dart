@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:main_project/constants/dummy_tasks.dart';
 import 'package:main_project/models/member_model.dart';
 import 'package:main_project/utils/teams.dart';
-import 'package:main_project/widgets/custom_fields/csv_file_input.dart';
+import 'package:main_project/widgets/fields/csv_file_input.dart';
 import 'package:main_project/widgets/layouts/base_dialog.dart';
 import 'package:main_project/widgets/layouts/base_layout.dart';
 import 'package:main_project/widgets/layouts/filter_dialog.dart';

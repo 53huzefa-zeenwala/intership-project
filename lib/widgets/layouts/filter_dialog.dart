@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:main_project/widgets/custom_fields/custom_dropdown.dart';
+import 'package:main_project/widgets/fields/custom_dropdown.dart';
 
 class FilterDialog extends StatelessWidget {
   final Widget filters;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:main_project/widgets/custom_button/primary_button.dart';
-import 'package:main_project/widgets/custom_fields/textfield/normal_textfield.dart';
-import 'package:main_project/widgets/custom_fields/textfield/password_textfield.dart';
+import 'package:main_project/widgets/fields/textfield/normal_textfield.dart';
+import 'package:main_project/widgets/fields/textfield/password_textfield.dart';
 import 'package:main_project/widgets/login_register_form/sign_form.dart';
 import 'package:email_validator/email_validator.dart';
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:main_project/models/member_model.dart';
 import 'package:main_project/utils/departments.dart';
 import 'package:main_project/utils/teams.dart';
-import 'package:main_project/widgets/custom_fields/csv_file_input.dart';
+import 'package:main_project/widgets/fields/csv_file_input.dart';
 import 'package:main_project/widgets/layouts/page_heading.dart';
 
 import 'package:main_project/widgets/layouts/base_layout.dart';
